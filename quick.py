@@ -12,20 +12,14 @@ def get_command():
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
-        with httpx.Client(
-            cookies=cookies,
-            headers=headers,
-            # generous timeout for slow net
-            timeout=httpx.Timeout(60.0, connect=20.0)
-        ) as client:
+        with httpx.Client(cookies=cookies, headers=headers, timeout=httpx.Timeout(60.0, connect=20.0)) as client:
             print("Fetching full page...")
             response = client.get(TARGET_URL)
             response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
+            soup = BeautifulSoup(response.text, "html5lib")
             matches = soup.find_all("a")
             for tag in matches:
                 print(tag.get("href"))
-
     except httpx.RequestError as ex:
         print("Request failed:", ex)
     except httpx.TimeoutException as ex:
